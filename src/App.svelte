@@ -1,11 +1,16 @@
 <script>
-	import { isAuthenticated } from './helpers/utils';
-	import {googleOauth} from './config';
+	import {
+		isAuthenticated
+	} from './helpers/utils';
+	import {
+		googleOauth
+	} from './config';
 
 	const handleSignInClick = () => {
-	    let url = `https://accounts.google.com/o/oauth2/auth?scope=email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar&response_type=code&access_type=offline&redirect_uri=${googleOauth.redirect_uri}&client_id=${googleOauth.client_id}`;
-	    window.open(url, "_self");
-	  };
+		let url =
+			`https://accounts.google.com/o/oauth2/auth?scope=email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/calendar&response_type=code&access_type=offline&redirect_uri=${googleOauth.redirect_uri}&client_id=${googleOauth.client_id}`;
+		window.open(url, "_self");
+	};
 </script>
 
 <main class="page-container">
@@ -19,7 +24,8 @@
 				<div class="d-flex">
 					<div class="col-md-6">
 						<h1 class="hero-tag">Let's make online meets more open and organized</h1>
-						<div class="mt-5"><button class="btn btn-login-google" on:click={handleSignInClick}><img class="btn-login-google__icon" src="./images/google-icon-svg.svg" alt=""><span class="btn-login-google__text">Log in with Google</span></button></div>
+						<div class="mt-5"><button class="btn btn-login-google" on:click={handleSignInClick}><img class="btn-login-google__icon" src="./images/google-icon-svg.svg" alt=""><span class="btn-login-google__text">Log in with Google</span></button>
+						</div>
 					</div>
 					<div class="col-md-6"><img src="./images/getmeet-hero.png" class="img-fluid" alt=""></div>
 				</div>
@@ -32,15 +38,17 @@
 	.d-flex {
 		display: flex;
 	}
+
 	.img-fluid {
-    max-width: 100%;
-    height: auto;
-}
-.hero-tag {
-    font-size: 63px;
-    font-weight: 600;
-    color: #111;
-}
+		max-width: 100%;
+		height: auto;
+	}
+
+	.hero-tag {
+		font-size: 63px;
+		font-weight: 600;
+		color: #111;
+	}
 
 	.login-page-header {
 		display: flex;
@@ -53,10 +61,12 @@
 	.login-page-header__meet-logo {
 		margin: 40px 0 80px;
 	}
+
 	.login-page-header__meet-logo img {
-	    height: 100%;
-	    width: 160px;
+		height: 100%;
+		width: 160px;
 	}
+
 	.btn {
 		display: inline-block;
 		font-weight: 400;
@@ -86,18 +96,21 @@
 	}
 
 	.btn-login-google__icon {
-	    height: 20px;
-	    vertical-align: middle;
-	    width: auto;
+		height: 20px;
+		vertical-align: middle;
+		width: auto;
 	}
+
 	.btn-login-google__text {
-    padding: 0 16px;
-    vertical-align: middle;
-}
-.container {
-    width: 1184px;
-    max-width: 100%;
-}
+		padding: 0 16px;
+		vertical-align: middle;
+	}
+
+	.container {
+		width: 1184px;
+		max-width: 100%;
+	}
+
 	.page-container {
 		max-width: 1240px;
 		width: 100%;
@@ -112,5 +125,4 @@
 		width: 100%;
 		padding: 0;
 	}
-
 </style>
