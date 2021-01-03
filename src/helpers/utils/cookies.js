@@ -10,5 +10,5 @@ const docCookies = {
       || null;
 	},
 }
-
+	
 export {docCookies}
