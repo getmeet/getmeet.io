@@ -1,75 +1,68 @@
-import svelte from 'rollup-plugin-svelte';
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import livereload from 'rollup-plugin-livereload';
-import { terser } from 'rollup-plugin-terser';
-import css from 'rollup-plugin-css-only';
+import svelte from "rollup-plugin-svelte";
+import resolve from "@rollup/plugin-node-resolve";
+import { terser } from "rollup-plugin-terser";
+import livereload from "rollup-plugin-livereload";
+import serve from "rollup-plugin-serve";
+import copy from "rollup-plugin-copy";
+import fs from "fs";
+import posthtml from "posthtml";
+import { hash } from "posthtml-hash";
+import htmlnano from "htmlnano";
+import rimraf from "rimraf";
 
-const production = !process.env.ROLLUP_WATCH;
+const PROD = !process.env.ROLLUP_WATCH;
+const OUT_DIR = "build";
 
-function serve() {
-	let server;
+function hashStatic() {
+  return {
+    name: "hash-static",
+    buildStart() {
+      rimraf.sync(OUT_DIR);
+    },
+    writeBundle() {
+      posthtml([
+        // hashes `bundle.[hash].css` and `bundle.[hash].js`
+        hash({ path: OUT_DIR }),
 
-	function toExit() {
-		if (server) server.kill(0);
-	}
-
-	return {
-		writeBundle() {
-			if (server) return;
-			server = require('child_process').spawn('npm', ['run', 'start', '--', '--dev'], {
-				stdio: ['ignore', 'inherit', 'inherit'],
-				shell: true
-			});
-
-			process.on('SIGTERM', toExit);
-			process.on('exit', toExit);
-		}
-	};
+        // minifies `build/index.html`
+        // https://github.com/posthtml/htmlnano
+        htmlnano(),
+      ])
+        .process(fs.readFileSync(`${OUT_DIR}/index.html`))
+        .then((result) =>
+          fs.writeFileSync(`${OUT_DIR}/index.html`, result.html)
+        );
+    },
+  };
 }
 
 export default {
-	input: 'src/main.js',
-	output: {
-		sourcemap: true,
-		format: 'iife',
-		name: 'app',
-		file: 'public/build/bundle.js'
-	},
-	plugins: [
-		svelte({
-			compilerOptions: {
-				// enable run-time checks when not in production
-				dev: !production
-			}
-		}),
-		// we'll extract any component CSS out into
-		// a separate file - better for performance
-		css({ output: 'bundle.css' }),
-
-		// If you have external dependencies installed from
-		// npm, you'll most likely need these plugins. In
-		// some cases you'll need additional configuration -
-		// consult the documentation for details:
-		// https://github.com/rollup/plugins/tree/master/packages/commonjs
-		resolve({
-			browser: true,
-			dedupe: ['svelte']
-		}),
-		commonjs(),
-
-		// In dev mode, call `npm run start` once
-		// the bundle has been generated
-		!production && serve(),
-
-		// Watch the `public` directory and refresh the
-		// browser on changes when not in production
-		!production && livereload('public'),
-
-		// If we're building for production (npm run build
-		// instead of npm run dev), minify
-		production && terser()
-	],
+  input: "src/main.js",
+  output: {
+    sourcemap: !PROD,
+    format: "iife",
+    name: "getmeet.io",
+    file: `${OUT_DIR}/bundle.[hash].js`,
+  },
+  plugins: [
+    copy({ targets: [{ src: "public/*", dest: OUT_DIR }] }),
+    svelte({
+      dev: !PROD,
+      css: (css) => {
+        // Emits CSS to file, disables CSS sourcemaps in production
+        css.write("bundle.[hash].css", !PROD);
+      },
+    }),
+    resolve(),
+    !PROD &&
+      serve({
+        contentBase: [OUT_DIR],
+        port: 3000,
+      }),
+    !PROD && livereload({ watch: OUT_DIR }),
+    PROD && terser(),
+    PROD && hashStatic(),
+  ],
 	watch: {
 		clearScreen: false
 	}

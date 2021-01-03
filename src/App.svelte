@@ -1,5 +1,4 @@
 <script>
-	export let name;
 	import { isAuthenticated } from './helpers/utils';
 	import {googleOauth} from './config';
 
@@ -42,14 +41,6 @@
     font-weight: 600;
     color: #111;
 }
-	.app-body {
-		background-color: #f5f7fa;
-		margin-left: auto;
-		margin-right: auto;
-		display: flex;
-		flex-direction: row;
-		min-height: 100vh;
-	}
 
 	.login-page-header {
 		display: flex;
@@ -122,17 +113,4 @@
 		padding: 0;
 	}
 
-	.app-header {
-		display: flex;
-		flex-wrap: wrap;
-		width: 100%;
-		-webkit-box-align: center;
-		align-items: center;
-		margin: 0;
-		padding: 28px 0 15px;
-	}
-
-	.app-header__title {
-		font-size: 26px;
-	}
 </style>
